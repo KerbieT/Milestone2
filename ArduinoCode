@@ -1,0 +1,51 @@
+#include <LiquidCrystal.h>
+
+#include <Arduino.h>
+#include <Time.h>
+
+const int switchPin = 2;
+const int ledPin = 12;
+byte hh=0; byte mi=0; byte ss=0; // hours, minutes, seconds
+unsigned int dddd=0; // days (for if you want a calendar)
+unsigned long lastTick=0; // time that the clock last "ticked"
+char timestring[17]; // for output
+
+
+void setup() {
+  Serial.begin(9600);
+  // this part goes in your "setup"
+
+
+  pinMode(switchPin, INPUT);
+
+  pinMode(ledPin, OUTPUT);
+
+  digitalWrite(switchPin, HIGH);
+
+}//setup
+
+void loop() {
+  if ((micros() - lastTick) >= 1000000UL) {
+  lastTick += 1000000UL;
+  ss++;
+  if (ss>=60) { ss-=60; mi++; }
+  if (mi>=60) { mi-=60; hh++; }
+  if (hh>=24) { hh-=24; dddd++; }
+}//Time Loop
+  
+  if(digitalRead(switchPin) == LOW){//LED IS ON, DOOR IS OPEN
+digitalWrite(ledPin, LOW);
+
+sprintf(timestring,"%02d:%02d:%02d", hh, mi, ss);
+Serial.println(timestring);
+  }
+
+  else{
+
+  digitalWrite(ledPin, HIGH);//LED IS OFF, DOOR IS CLOSED
+
+  }
+  
+
+}//loop
+
